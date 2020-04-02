@@ -78,8 +78,8 @@ while getopts "h" option; do
 		h)
 			wyswietl_help
 			exit;;
-		esac
-	done
+	esac
+done
 
 
 # wymagany 1 argument (strona z której mają być pobrane obrazki)
