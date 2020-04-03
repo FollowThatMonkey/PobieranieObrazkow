@@ -26,13 +26,13 @@ pobierz () {
 
 # Funkcja wyszukująca i pobierająca obrazki - analizuje plik tymczasowy
 obrazki () { 
-	# przypisanie linków do obrazków (ścieżki względne/bezwzgl.) do zmiennej $obrazki
+	# przypisanie linków do obrazków (ścieżki względne/bezwzgl.) do zmiennej $obrazy
 	# grep -oPe 'regex' = wyszukuje wyrażenia regularne w trybie zgodność z Perl'em. Wyrażenia typu 'src...jpg' lub 'src...png'
 	# sed 's/src=\"//g' = zamienia z podanego strumienia zadane wyrażenie regularne (w moim przypadku zamienia wyrażenie 'src="' na pusty znak - czyli go usuwa)
-	obrazki=$(grep -oPe "src.*?(jpg|png)" $temp_file | sed 's/src=\"//g')
+	obrazy=$(grep -oPe "src.*?(jpg|png)" $temp_file | sed 's/src=\"//g')
 
 	# pętla iterująca po wszystkich znalezionych linkach do obrazków
-	for i in $obrazki
+	for i in $obrazy
 	do
 		#jeżeli podany jest bezpośredni link do obrazka to go pobierz (link typu 'src="http://pw.edu.pl/obrazek.jpg')
 		if [ $(echo $i | grep -Pe "^(ht)") ] # wyrażenie ^(ht) zwraca wyrażenie zaczynające się od liter ht - np. http://...

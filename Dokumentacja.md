@@ -75,4 +75,8 @@ wget -qO $temp_file $1
 ```
 
 ### Funkcja `obrazki()`
-
+7. Do zmiennej `obrazy` zostaje przypisany link do obrazków. Linki do obrazków zostają wyszukane przy pomocy programu `grep`. Wywołane opcje dla tego programu to: `-o` zwraca jedynie pasujący fragment tekstu (nie całą linię), `-P` tryb wyrażeń regularnych zgodnych z `Perl`, `-e` użycie podanego wzorca. Podany przeze mnie wzorzec, to: `src.*?(jpg|png)`, co oznacza, że `grep` wyszuka frazę która zaczyna się od liter `src`, natomiast kończy się literami `jpg` lub `png`. Kolejno, korzystając z programu `sed`, usunięta zostaje część tekstu `src="`, a więc, dla przykładu, z tekstu `src="obrazek.jpg"` pozostaje `obrazek.jpg`.
+```bash
+obrazki () { 
+	obrazy=$(grep -oPe "src.*?(jpg|png)" $temp_file | sed 's/src=\"//g')
+```
