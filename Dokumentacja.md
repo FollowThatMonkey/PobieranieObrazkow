@@ -3,7 +3,7 @@ Dokumentacja skryptu
 
 ## Struktura działania  
 1. Skrypt sprawdza czy podana została opcja `-h`
-   * Jeśli tak, to skrypt wyświetla pomoc i kończy działanie
+   * Jeśli tak, to skrypt wyświetla pomoc i kończy działanie. Jeśli została podana inna opcja, to skrypt wyświetla komunikat błędu i kończy działanie.
 2. Skrypt sprawdza czy została podana odpowiednia liczba argumentów (wymagany jeden argument - strona WWW).
    * Jeśli podana została błędna liczba argumentów, to skrypt wyświetla komunikat błędu i kończy działanie.
 3. Skrypt pobiera przy użyciu programu `wget` zadaną stronę WWW dopliku tymczasowego.
@@ -31,6 +31,9 @@ while getopts "h" option; do
 		h)
 			wyswietl_help
 			exit;;
+		\?)
+			echo "Nieznana opcja. Użyj -h aby wyświetlić pomoc."
+			exit;;
 	esac
 done
 ```
@@ -45,6 +48,7 @@ then
 	usun # usuwa plik tymczasowy
 else
 	echo "Podana błędna liczba argumentów. Wymagana liczba argumentów to 1."
+	echo "Użyj -h aby wyświetlić pomoc."
 fi
 ```
 

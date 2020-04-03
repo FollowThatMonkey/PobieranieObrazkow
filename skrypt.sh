@@ -83,6 +83,9 @@ while getopts "h" option; do
 		h)
 			wyswietl_help
 			exit;;
+		\?)
+			echo "Nieznana opcja. Użyj -h aby wyświetlić pomoc."
+			exit;;
 	esac
 done
 
@@ -96,4 +99,5 @@ then
 	usun # usuwa plik tymczasowy
 else
 	echo "Podana błędna liczba argumentów. Wymagana liczba argumentów to 1."
+	echo "Użyj -h aby wyświetlić pomoc."
 fi
