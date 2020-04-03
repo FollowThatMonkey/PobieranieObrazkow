@@ -2,7 +2,7 @@ Instrukcja obsługi skryptu
 ==========================
 
 ## Składnia 
-Składnia: ```./skrypt.sh [OPCJA] [URL]```
+Składnia: `./skrypt.sh [OPCJA] [URL]`
 
 ## Opcje  
 `-h` - wyświetlenie pomocy i zakończenie programu.
