@@ -24,7 +24,7 @@ temp_file=temp_file # nazwa pliku tymczasowego
 url="" # zmienna przechowująca adres strony internetowej z której pobrane zostaną obrazki
 ```
 
-2. Sprawdzenie opcji programu. Jeśli została wywołana opcja `-h`, to skrypt wyświetli pomoc i zakończy działanie.
+2. Sprawdzenie opcji programu. Jeśli została wywołana opcja `-h`, to skrypt wyświetli pomoc (wywoła funkcję `wyswietl_help()`) i zakończy działanie.
 ```bash
 while getopts "h" option; do
 	case $option in
@@ -75,8 +75,49 @@ wget -qO $temp_file $1
 ```
 
 ### Funkcja `obrazki()`
-7. Do zmiennej `obrazy` zostaje przypisany link do obrazków. Linki do obrazków zostają wyszukane przy pomocy programu `grep`. Wywołane opcje dla tego programu to: `-o` zwraca jedynie pasujący fragment tekstu (nie całą linię), `-P` tryb wyrażeń regularnych zgodnych z `Perl`, `-e` użycie podanego wzorca. Podany przeze mnie wzorzec, to: `src.*?(jpg|png)`, co oznacza, że `grep` wyszuka frazę która zaczyna się od liter `src`, natomiast kończy się literami `jpg` lub `png`. Kolejno, korzystając z programu `sed`, usunięta zostaje część tekstu `src="`, a więc, dla przykładu, z tekstu `src="obrazek.jpg"` pozostaje `obrazek.jpg`.
+7. Do zmiennej `obrazy` zostają przypisane linki do obrazków. Linki do obrazków zostają wyszukane z pliku tymczasowego przy pomocy programu `grep`. Wywołane opcje dla tego programu to: `-o` zwraca jedynie pasujący fragment tekstu (nie całą linię), `-P` tryb wyrażeń regularnych zgodnych z `Perl`, `-e` użycie podanego wzorca. Podany przeze mnie wzorzec, to: `src.*?(jpg|png)`, co oznacza, że `grep` wyszuka frazę która zaczyna się od liter `src`, natomiast kończy się literami `jpg` lub `png`. Kolejno, korzystając z programu `sed`, usunięta zostaje część tekstu `src="`, a więc, dla przykładu, z tekstu `src="obrazek.jpg"` pozostaje `obrazek.jpg`.
 ```bash
 obrazki () { 
 	obrazy=$(grep -oPe "src.*?(jpg|png)" $temp_file | sed 's/src=\"//g')
+```
+
+8. Kolejno, tworzę pętlę `for` iterującą po przygotowanych wcześniej linkach - zawartych w zmiennej `$obrazy`.
+```bash
+for i in $obrazy
+	do
+```
+
+9. Następnie należy rozważyć trzy przypadki na jaki może być podany link do zdjęcia.
+	* Linki mogą być podane bezpośrednio, a więc na przykład: `html://strona.com/obrazek.jpg`. Jeśli tak jest, to można pobrać dany obrazek bez dalszej obróbki zadanego linku. Sprawdzenie czy link jest podany bezpośrednio jest wykonane wykorzystując program `grep`. Użyte wyrażenie `^(ht)` zwraca tekst zaczynający się od liter `ht`. Takim tekstem jest np. `http://strona.com/obrazek.jpg`.
+	```bash
+	if [ $(echo $i | grep -Pe "^(ht)") ] # wyrażenie ^(ht) zwraca wyrażenie zaczynające się od liter ht - np. http://...
+			then
+				wget -q $i
+	```
+
+	* Drugi przypadek to gdy podany link odnosi się do głównego katalogu danej strony internetowej, a więc np. `/folder/obrazek.jpg`. Sprawdzenie czy link ma taką postać jest wykonane wykorzystując program `grep`. Użyte wyrażenie `^/` zwraca wyrażenia zaczynająca się od znaku `/`, a więc np. `/folder/obrazek.jpg`. Kolejno, przy użyciu programu `grep`, do zmiennej `url2` zostaje przypisana główna strona danego URL. Wyrażenie `^.*?\b\/` wyszukuje dowolny ciąg znaków, po którym następuje ciąg liter zakończony sleszem, więc z tekstu `http://strona.com/podstrona/` zostanie wyekstraktowany tekst `http://strona.com/`. Następnie do zmiennej `$obrazek2` zostaje przypisany link do obrazka, jednocześnie usuwając z niego slesza od którego się rozpoczyna, a wieć z linku `/folder/obrazek.jpg` pozostanie `folder/obrazek.jpg`. Ostatecznie przy pomocy programu `wget` zostaje pobrany link powstały ze złączenia zmiennych `$url2` oraz `$obrazek2`, a więc dla przykładu frazy `http://strona.com/` oraz `folder/obrazek.jpg` zostaną złączone w `http://strona.com/folder/obrazek.jpg`.
+	```bash
+	elif [ $(echo $i | grep -Pe "^/") ] # przypadek jeżeli link ma wzór typu 'src="/folder/obrazek.jpg"'
+		then
+			# zapisanie linku jako np. 'http://strona.com/' - katalog główny podanej strony
+			url2=$(echo $url | grep -oPe "^.*?\b\/") # wyrażenie ^.*?\b\/ wyszukuje pierwsze słowo kończące się sleszem, np. http://moja.strona.com/podstrona/ --> http://moja.strona.com/
+			# zapisanie ścieżki względniej jako np. 'folder/zdjęcie.jpg'
+			obrazek2=$(echo $i | sed 's/\///')
+			# utworzenie linku do pobrania obrazka przez złączenie 'http://strona.com/' + 'folder/zdjęcie.jpg' w 'http://strona.com/folder/zdjęcie.jpg'
+			wget -q "${url2}${obrazek2}"
+	```
+
+	* Ostatni przypadek, to gdy link został podany jako ścieżka względna. W takim przypadku link do pobrania danego zdjęcia powstaje ze złączenia zmiennych `$url` oraz `$i`, a więc np. ze złączenia frazy `http://strona.com/podstrona/` oraz `../folder/obrazek.jpg` we frazę `http://strona.com/podstrona/../folder/obrazek.jpg`. Taki link do obrazka jest odpowiedni do pobrania przez program `wget`.
+	```bash
+		else # przypadek gdy obrazek jest w folderze znajdującym się w aktualnym folderze. Link ma wzór 'src="folder/zdjęcie.jpg"'
+			wget -q "${url}${i}" # utworzenie linku do pobrania obrazka przez złączenie adresu strony i adresu zdjęcia
+		fi
+	```
+
+### Funkcja `usun()`
+10. Po pobraniu obrazków zostaje wywołana funkcja `usun()`, która usuwa plik tymczasowy, po czym następuje zakończenie działania skryptu.
+```bash
+usun () { 
+	rm $temp_file
+}
 ```
