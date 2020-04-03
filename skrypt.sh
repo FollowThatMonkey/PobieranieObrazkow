@@ -60,8 +60,13 @@ usun () {
 # pomoc wyświetlana po uruchomieniu skryptu z flagą -h
 wyswietl_help () {
 	echo "Skrypt pobierający obrazki .jpg oraz .png z podanej strony WWW."
+	echo "Składnia: $0 [OPCJA] [URL]"
+	echo
 	echo "Aby pobrać obrazki z danej strony internetowej, podaj ją jako argument skryptu."
 	echo "Przykładowe użycie programu: $0 http://www.fizyka.pw.edu.pl/"
+	echo
+	echo "Opcje:"
+	echo "  -h	wypisuje tę pomoc."
 }
 
 
