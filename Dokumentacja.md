@@ -71,4 +71,8 @@ wget -qO $temp_file $1
 		usun # usunięcie pliku tymczasowego (wget nawet w przypadku błędu pobierania utworzy zadany plik tymczasowy)
 		exit 1
 	fi
+}
 ```
+
+### Funkcja `obrazki()`
+
