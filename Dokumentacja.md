@@ -24,7 +24,7 @@ temp_file=temp_file # nazwa pliku tymczasowego
 url="" # zmienna przechowująca adres strony internetowej z której pobrane zostaną obrazki
 ```
 
-2. Sprawdzenie opcji programu. Jeśli została wywołana opcja `-h`, to skrypt wyświetli pomoc (wywoła funkcję `wyswietl_help()`) i zakończy działanie.
+2. Sprawdzenie opcji programu. Jeśli została wywołana opcja `-h`, to skrypt wyświetli pomoc (wywoła funkcję `wyswietl_help()`) i zakończy działanie skryptu.
 ```bash
 while getopts "h" option; do
 	case $option in
